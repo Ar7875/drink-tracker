@@ -18,7 +18,7 @@
     { id: "margarita", label: "Margarita", iw: 642, ih: 750, ox: 4,  oy: 32, gw: 549, gh: 712, liquid: [60, 410],  rowH: 81, heroH: 222 },
   ];
 
-  const src = (d, kind) => `assets/${d.id}-${kind}.png`;
+  const src = (d, kind) => `${d.id}-${kind}.png`;
   const FULL_AT = 10;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const dur = (ms) => (reduceMotion ? Math.min(ms, 120) : ms);
