@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#131418">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Drink Tracker</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preload" as="image" href="assets/wine-empty.png">
+  <link rel="preload" as="image" href="assets/beer-empty.png">
+  <link rel="preload" as="image" href="assets/whiskey-empty.png">
+  <link rel="preload" as="image" href="assets/margarita-empty.png">
+</head>
+<body>
+  <main class="device" id="app" data-state="select">
+    <div class="stage">
+
+      <!-- SS1 heading -->
+      <h1 class="intro-title" id="introTitle">Choose your drink</h1>
+
+      <!-- SS2 heading -->
+      <div class="track-title" id="trackTitle" aria-hidden="true">
+        <p class="track-label" id="drinkName">Beer</p>
+        <h2 class="track-heading">How many did you<br>have?</h2>
+      </div>
+
+      <!-- SS2 counter -->
+      <div class="counter" id="counter" aria-hidden="true">
+        <button class="counter-btn minus" id="minusBtn" type="button" aria-label="Remove drink" tabindex="-1">
+          <span class="glyph" aria-hidden="true"></span>
+        </button>
+        <output class="count" id="count" aria-live="polite" aria-atomic="true"><span class="count-num">0</span></output>
+        <button class="counter-btn plus" id="plusBtn" type="button" aria-label="Add drink" tabindex="-1">
+          <span class="glyph" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <!-- SS2 hero glass (travels from the row) -->
+      <div class="hero" id="hero" aria-hidden="true">
+        <div class="glass hero-glass" id="heroGlass">
+          <div class="stack">
+            <img class="layer layer-empty" alt="" draggable="false">
+            <img class="layer layer-fill" alt="" draggable="false">
+            <img class="layer layer-cap" alt="" draggable="false">
+          </div>
+        </div>
+      </div>
+
+      <!-- Drink options: Wine → Beer → Whiskey → Margarita -->
+      <div class="row" id="row" role="group" aria-label="Drinks"></div>
+
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

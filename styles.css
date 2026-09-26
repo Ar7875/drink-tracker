@@ -1,0 +1,381 @@
+/* ------------------------------------------------------------
+   Drink tracker — mobile-first, sized from the 393×852 Figma frame.
+   All layout values are Figma px multiplied by a design unit:
+     --px  1 design px horizontally  (stage width / 393)
+     --py  1 design px vertically    (stage height / 852)
+     --p   uniform size unit         (min of the two, never distorts)
+------------------------------------------------------------ */
+
+:root {
+  --bg: #131418;
+  --text: #e6e6e6;
+  --text-muted: #b9b9bb;
+  --accent: #5ab3e2;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft-spring: cubic-bezier(0.2, 0.9, 0.3, 1.04);
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+button:focus { outline: none; }
+button:focus-visible {
+  outline: 2px solid rgba(90, 179, 226, 0.8);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+img { -webkit-user-drag: none; user-select: none; }
+
+/* ------------------------------------------------------------
+   Device / viewport
+------------------------------------------------------------ */
+.device {
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    /* soft cyan glow sitting on the diagonal */
+    radial-gradient(48% 15% at 82% 57%, rgba(60, 132, 214, 0.55) 0%, rgba(60, 132, 214, 0) 100%),
+    radial-gradient(55% 14% at 18% 71%, rgba(44, 108, 200, 0.4) 0%, rgba(44, 108, 200, 0) 100%),
+    /* dark top → deep blue bottom, on a diagonal (lower-left → upper-right edge) */
+    linear-gradient(153deg,
+      #131418 0%,
+      #131418 44%,
+      #172440 50%,
+      #1f4a93 57%,
+      #2a63bb 65%,
+      #2753b0 76%,
+      #2244a6 88%,
+      #1f3b9e 100%);
+}
+
+/* Film grain that sits over everything, like the Figma frame */
+.device::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 1.6 -0.3'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 180px 180px;
+}
+
+/* On larger screens keep a phone-sized viewport, centred */
+@media (min-width: 600px) and (min-height: 560px) {
+  body { background: #0b0c0e; }
+  .device {
+    height: min(calc(100dvh - 48px), 852px);
+    width: auto;
+    max-width: none;
+    aspect-ratio: 393 / 852;
+    border-radius: 44px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 30px 80px rgba(0, 0, 0, 0.55);
+  }
+}
+
+.stage {
+  position: absolute;
+  inset: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+         env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  container-type: size;
+}
+
+/* Design units need the container, so they live on the children */
+.stage > * {
+  --px: calc(100cqw / 393);
+  --py: calc(100cqh / 852);
+  --p: min(var(--px), var(--py));
+}
+
+/* ------------------------------------------------------------
+   Headings
+------------------------------------------------------------ */
+.intro-title,
+.track-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+  will-change: transform, opacity;
+}
+
+.intro-title {
+  top: calc(253 * var(--py));
+  transform: translateY(-50%);
+  font-weight: 700;
+  font-size: calc(34.6 * var(--p));
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.track-title {
+  top: 0;
+  height: calc(170 * var(--py));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.track-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(86 * var(--py));
+  margin: 0;
+  font-weight: 400;
+  font-size: calc(21 * var(--p));
+  line-height: 1;
+  color: var(--text-muted);
+  transform: translateY(-50%);
+}
+
+.track-heading {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* line centres at 123 / 152 in the Figma frame */
+  top: calc(137.5 * var(--py));
+  margin: 0;
+  font-weight: 700;
+  font-size: calc(25.7 * var(--p));
+  line-height: calc(29 * var(--p));
+  letter-spacing: -0.005em;
+  color: var(--text);
+  transform: translateY(-50%);
+}
+
+/* ------------------------------------------------------------
+   Counter:  –   [COUNT]   +
+------------------------------------------------------------ */
+.counter {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(264 * var(--py));
+  transform: translateY(-50%);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.count {
+  display: block;
+  min-width: calc(52 * var(--p));
+  text-align: center;
+  font-weight: 700;
+  font-size: calc(80 * var(--p));
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.count-num { display: inline-block; will-change: transform, opacity; }
+
+.counter-btn {
+  position: relative;
+  /* generous invisible touch target around a small glyph */
+  width: calc(64 * var(--p));
+  height: calc(72 * var(--p));
+  min-width: 48px;
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+}
+.counter-btn.minus {
+  justify-self: end;
+  /* glyph edge sits 27 design px from the number */
+  margin-right: calc(27 * var(--p) - (max(48px, 64 * var(--p)) - 19 * var(--p)) / 2);
+}
+.counter-btn.plus {
+  justify-self: start;
+  margin-left: calc(29 * var(--p) - (max(48px, 64 * var(--p)) - 35 * var(--p)) / 2);
+}
+
+.glyph {
+  position: relative;
+  display: block;
+  pointer-events: none;
+}
+.glyph::before,
+.glyph::after {
+  content: "";
+  position: absolute;
+  background: var(--accent);
+  border-radius: calc(1 * var(--p));
+}
+.minus .glyph {
+  width: calc(19 * var(--p));
+  height: calc(7 * var(--p));
+  transform: translateY(calc(4 * var(--p)));
+}
+.minus .glyph::before { inset: 0; }
+.minus .glyph::after { display: none; }
+
+.plus .glyph {
+  width: calc(35 * var(--p));
+  height: calc(35 * var(--p));
+  transform: translateY(calc(4 * var(--p)));
+}
+.plus .glyph::before {
+  left: 0; right: 0;
+  top: calc(50% - 4 * var(--p));
+  height: calc(8 * var(--p));
+}
+.plus .glyph::after {
+  top: 0; bottom: 0;
+  left: calc(50% - 4 * var(--p));
+  width: calc(8 * var(--p));
+}
+
+/* ------------------------------------------------------------
+   Glass component
+   The .glass box is the glass silhouette (sticker outline included).
+   .stack is the full image canvas, offset so the silhouette fills
+   .glass — this keeps every asset at its natural proportions.
+   Empty, fill and cap layers share the exact same box.
+------------------------------------------------------------ */
+.glass {
+  position: relative;
+  aspect-ratio: var(--gw) / var(--gh);
+}
+
+.stack {
+  position: absolute;
+  left: calc(var(--ox) * -100% / var(--gw));
+  top: calc(var(--oy) * -100% / var(--gh));
+  width: calc(var(--iw) * 100% / var(--gw));
+  height: calc(var(--ih) * 100% / var(--gh));
+}
+
+.layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform-origin: 50% 50%;
+  pointer-events: none;
+}
+
+.layer-fill { clip-path: inset(100% 0 0 0); }
+.layer-cap { opacity: 0; }
+
+/* ------------------------------------------------------------
+   Hero (tracker) glass
+------------------------------------------------------------ */
+.hero {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(472 * var(--py));
+  height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.hero-glass {
+  height: calc(var(--hero-h, 231) * var(--p));
+  transform-origin: 50% 50%;
+  filter: drop-shadow(calc(5 * var(--p)) calc(9 * var(--p)) calc(9 * var(--p)) rgba(4, 8, 24, 0.42));
+  will-change: transform, opacity;
+}
+
+/* ------------------------------------------------------------
+   Drink row
+------------------------------------------------------------ */
+.row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(773 * var(--py));
+  transform: translateY(-100%);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: calc(24 * var(--p));
+}
+
+.drink {
+  position: relative;
+  display: block;
+  /* invisible touch padding around each glass */
+  padding: calc(10 * var(--p)) calc(4 * var(--p)) calc(8 * var(--p));
+  margin: calc(-10 * var(--p)) calc(-4 * var(--p)) calc(-8 * var(--p));
+  transition: opacity 420ms var(--ease-out), filter 420ms var(--ease-out);
+}
+
+.drink .glass {
+  height: calc(var(--row-h) * var(--p));
+  transition: transform 180ms var(--ease-out);
+}
+
+.drink:active .glass { transform: scale(0.95); }
+
+/* SS2 row styling */
+.device[data-state="track"] .drink:not(.is-selected) { opacity: 0.5; }
+.device[data-state="track"] .drink.is-selected .glass {
+  filter: drop-shadow(calc(2 * var(--p)) calc(4 * var(--p)) calc(4 * var(--p)) rgba(4, 8, 24, 0.45));
+}
+
+/* ------------------------------------------------------------
+   Initial appearance
+------------------------------------------------------------ */
+.device.is-booting .intro-title,
+.device.is-booting .drink { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .drink,
+  .drink .glass { transition-duration: 1ms !important; }
+}
